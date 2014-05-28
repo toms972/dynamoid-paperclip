@@ -33,6 +33,25 @@ module Dynamoid
 
     module ClassMethods
 
+    # Adds after_commit
+    def after_commit(*args, &block)
+      options = args.pop if args.last.is_a? Hash
+      if options
+        case options[:on]
+        when :create
+          after_create(*args, &block)
+        when :update
+          after_update(*args, &block)
+        when :destroy
+          after_destroy(*args, &block)
+        else
+          after_save(*args, &block)
+        end
+      else
+        after_save(*args, &block)
+      end
+    end
+    
       ##
       # Adds Dynamoid::Paperclip's "#has_dynamoid_attached_file" class method to the model
       # which includes Paperclip and Paperclip::Glue in to the model. Additionally
